@@ -1,4 +1,4 @@
-# TitanBot 🚀
+# TitanBot
 
 TitanBot is a high-performance, multi-vector load testing engine built in Go. It is designed to "strength test" enterprise web servers, gateways, and service meshes by subjecting them to massive, sustained connection floods across multiple protocols simultaneously.
 
