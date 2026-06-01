@@ -8,6 +8,7 @@ TitanBot is a high-performance, multi-vector load testing engine built in Go. It
 - **Omni Mode:** Fire all vectors at once (`-protocol all`) to simulate chaotic, heavy enterprise traffic from every angle.
 - **High Concurrency:** Built with Go's lightweight goroutines, allowing you to spawn thousands of concurrent connections effortlessly from a single machine.
 - **Customizable:** Inject custom HTTP headers (like `Host` or `Authorization`) and specify raw payloads for TCP/UDP tests.
+- **Authorization Lock:** To prevent malicious use, TitanBot enforces a strict cryptographic handshake with the target server before any traffic is sent.
 - **Beautiful HTML Reports:** Automatically generates a sleek, dark-themed `report.html` dashboard detailing success rates, throughput (RPS), and latency distribution.
 
 ## Installation
@@ -23,6 +24,20 @@ go build -o titanbot.exe
 ## Usage
 
 Run TitanBot from your terminal with the required flags.
+
+### The Authorization Lock
+
+Before TitanBot unleashes any traffic, it must verify that you actually own the target server. 
+
+When you run a test, TitanBot generates a random 16-byte hex token and pauses:
+1. It prompts you to upload a file to the target server at `/.well-known/load-test-auth.txt` containing exactly this token.
+2. You press Enter.
+3. TitanBot sends a single `GET` request to verify the file and token. If it succeeds, the attack begins. If it fails, TitanBot instantly aborts.
+
+*Automated Pipelines:* If you are running TitanBot in CI/CD, you can bypass the interactive prompt by pre-placing a token on your server and passing it via the CLI:
+```powershell
+.\titanbot.exe -target http://api.example.com -protocol http -auth-token my-secret-token ...
+```
 
 ```powershell
 .\titanbot.exe -target <URL> -protocol <http|tcp|udp|websocket|all> -concurrency <number> -duration <seconds>
